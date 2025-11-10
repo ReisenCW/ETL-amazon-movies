@@ -69,6 +69,8 @@ class MovieSpider(scrapy.Spider):
 
             review_dict["review_rating"] = review.xpath('.//i[@data-hook="review-star-rating"]/span/text()').get(default="").strip().split(" out ")[0]  # eg. 3.0 out of 5 stars
 
+            review_dict["review_title"] = review.xpath('.//a[@data-hook="review-title"]/span/text()').get(default="").strip()
+
             review_dict["review_date"] = review.xpath('.//span[@data-hook="review-date"]/text()').get(default="").strip().split(" on ")[-1]  # eg. Reviewed in the United States on January 1, 2020
 
             review_dict["review_text"] = " ".join(review.xpath('.//span[@data-hook="review-body"]/div//text()').getall()).strip()
