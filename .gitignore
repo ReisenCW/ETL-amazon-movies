@@ -1,4 +1,4 @@
 etl-venv/
 __pycache__/
 data/*.txt
-data/crawled_movies/
+data/crawled_html/
