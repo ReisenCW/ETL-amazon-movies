@@ -12,6 +12,6 @@ def get_all_product_ids():
 if __name__ == "__main__":
     # 将list写入文件product_ids.txt，每行一个
     product_ids = get_all_product_ids()
-    with open("../data/product_ids.txt", "w", encoding="utf-8") as f:
+    with open("../data/products_id.txt", "w", encoding="utf-8") as f:
         for pid in product_ids:
             f.write(f"{pid}\n")

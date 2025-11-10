@@ -14,7 +14,7 @@ class MovieSpider(scrapy.Spider):
     name = "amazon_movie"
     allowed_domains = ["amazon.com"]
     # start_urls = [f"https://www.amazon.com/dp/{pid}" for pid in get_all_product_ids()]
-    start_urls = [f"https://www.amazon.com/dp/{pid}" for pid in get_all_product_ids()[0:1]]
+    start_urls = [f"https://www.amazon.com/dp/{pid}" for pid in get_all_product_ids()[0:0]]
 
 
     # 存储原始HTML的目录
@@ -22,6 +22,10 @@ class MovieSpider(scrapy.Spider):
     os.makedirs(HTML_STORE_DIR, exist_ok=True)
 
     def parse(self, response):
+        # 如果不是电影(不包含标签imdbInfo_feature_div), 直接跳过
+        if not response.xpath('//div[@id="imdbInfo_feature_div"]'):
+            return
+
         product_id = response.url.split("/dp/")[-1]
         item = AmazonMovieItem()
         item["product_id"] = product_id
@@ -33,23 +37,23 @@ class MovieSpider(scrapy.Spider):
             f.write(response.text)
         item["html_path"] = html_path
 
-        # 2. 解析电影元数据（Amazon页面结构可能变化，需根据实际调整XPath/CSS）
+        # 2. 解析电影元数据
         # 电影名
         item["movie_name"] = response.css("#productTitle::text").get(default="").strip()
 
-        # 上映时间（示例XPath，需调试）
-        item["release_date"] = response.xpath('//span[contains(test(), "release date")]/following-sibling::span/text()').get(default="").strip()
+        # 上映时间
+        item["release_date"] = response.xpath('//span[contains(text(), "Release date")]/following-sibling::span/text()').get(default="").strip()
 
         # 风格
-        item["genre"] = ",".join([g.strip() for g in response.xpath('//th[contains(text(), "Genre")]/following-sibling::td/a/text()').getall()])
+        item["genre"] = response.xpath('//td/span[contains(text(), "Genre")]/ancestor::td/following-sibling::td/span/text()').get(default="").strip()
 
         # 导演
-        item["director"] = response.xpath('//th[contains(text(), "Director")]/following-sibling::td/a/text()').get(default="").strip()
+        item["director"] = response.xpath('//span[contains(text(), "Director")]/following-sibling::span/text()').get(default="").strip()
 
-        # 全体演员
-        item["cast"] = ",".join([c.strip() for c in response.xpath('//th[contains(text(), "Cast")]/following-sibling::td/a/text()').getall()])
+        # 全体演员(以","分隔)
+        item["actors"] = response.xpath('//span[contains(text(), "Actors")]/following-sibling::span/text()').get(default="").strip()
 
         # 版本（如DVD/蓝光）
-        item["version"] = response.xpath('//th[contains(text(), "Format")]/following-sibling::td/text()').get(default="").strip()
+        item["version"] = ",".join(v for v in response.xpath('//div[@id="tmmSwatches"]/ul//a/span[@aria-label]/text()').getall())
 
         yield item
