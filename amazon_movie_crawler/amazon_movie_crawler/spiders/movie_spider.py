@@ -14,7 +14,7 @@ class MovieSpider(scrapy.Spider):
     name = "amazon_movie"
     allowed_domains = ["amazon.com"]
     # start_urls = [f"https://www.amazon.com/dp/{pid}" for pid in get_all_product_ids()]
-    start_urls = [f"https://www.amazon.com/dp/{pid}" for pid in get_all_product_ids()[0:0]]
+    start_urls = [f"https://www.amazon.com/dp/{pid}" for pid in get_all_product_ids()[0:1]]
 
 
     # 存储原始HTML的目录
@@ -55,5 +55,31 @@ class MovieSpider(scrapy.Spider):
 
         # 版本（如DVD/蓝光）
         item["version"] = ",".join(v for v in response.xpath('//div[@id="tmmSwatches"]/ul//a/span[@aria-label]/text()').getall())
+
+        # 3. 获取影评信息(每个电影获取最多5条)
+        reviews = []
+        review_block = response.xpath('//div/h3[@data-hook="dp-local-reviews-header"]/ancestor::div/ancestor::div//div[contains(@class, "a-row")]//ul')
+
+        count = 0
+        for review in review_block.xpath('.//li[@data-hook="review"]'):
+            if count >= 5:
+                break
+            review_dict = {}
+            review_dict["profile_name"] = review.xpath('.//span[@class="a-profile-name"]/text()').get(default="").strip()
+
+            review_dict["review_rating"] = review.xpath('.//i[@data-hook="review-star-rating"]/span/text()').get(default="").strip().split(" out ")[0]  # eg. 3.0 out of 5 stars
+
+            review_dict["review_date"] = review.xpath('.//span[@data-hook="review-date"]/text()').get(default="").strip().split(" on ")[-1]  # eg. Reviewed in the United States on January 1, 2020
+
+            review_dict["review_text"] = " ".join(review.xpath('.//span[@data-hook="review-body"]/div//text()').getall()).strip()
+
+            helpness = review.xpath('.//span[@data-hook="helpful-vote-statement"]/text()').get(default="").strip().replace("One person", "1 people").split(" people")[0] # eg. "2 people found this helpful" or "One person found this helpful"
+
+            review_dict["review_helpness"] = helpness if helpness.isdigit() else "0"
+
+            reviews.append(review_dict)
+            count += 1
+
+        item["reviews"] = reviews
 
         yield item
