@@ -6,7 +6,7 @@
 import scrapy
 
 class AmazonMovieItem(scrapy.Item):
-    product_id = scrapy.Field()  # 对应B00006HAXW
+    product_id = scrapy.Field()  # 对应B00006HAXW (ASIN)
     source_url = scrapy.Field()  # 商品页URL（https://amazon.com/dp/{product_id}）
     html_path = scrapy.Field()  # 原始HTML存储路径
     release_date = scrapy.Field()  # 上映时间
