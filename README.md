@@ -96,7 +96,7 @@ airflow scheduler -D
 ![alt text](image-1.png)
 
 - DAG调度图
-![alt text](image.png)
+![alt text](image-3.png)
 
 - 可以查看每个任务的具体执行情况
 ![alt text](image-2.png)
