@@ -10,6 +10,7 @@ def load_products_to_db():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.abspath(os.path.join(script_dir, '..'))
     db_path = os.path.join(project_root, 'database', 'amazon_movies.db')
+    print(f"Database path: {db_path}")
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 

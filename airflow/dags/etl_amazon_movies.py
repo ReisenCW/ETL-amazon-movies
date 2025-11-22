@@ -14,6 +14,7 @@ project_root = os.path.abspath(os.path.join(dags_folder, "..", ".."))
 # 将项目根目录添加到 Python 搜索路径
 sys.path.append(project_root)
 
+from etl_scripts.clear_db import clear_db
 from etl_scripts.load_reviews import load_reviews_to_db
 from etl_scripts.load_products import load_products_to_db
 from etl_scripts.merge_movies import merge_movies
@@ -38,6 +39,13 @@ dag = DAG(
     description='ETL pipeline for Amazon movies data',
     schedule_interval=timedelta(days=1),
     catchup=False,
+)
+
+# 任务0: 清空数据库
+clear_db_task = PythonOperator(
+    task_id='clear_database',
+    python_callable=clear_db,
+    dag=dag,
 )
 
 # 任务1: 加载评价数据
@@ -82,7 +90,10 @@ track_lineage_task = PythonOperator(
     dag=dag,
 )
 
+
 # 设置依赖关系
+clear_db_task >> load_reviews_task
+clear_db_task >> load_products_task
 load_reviews_task >> merge_movies_task
 load_products_task >> merge_movies_task
 merge_movies_task >> normalize_names_task

@@ -8,6 +8,7 @@ def load_reviews_to_db():
     logging.info("Starting load_reviews_to_db")
     # 连接数据库
     db_path = os.path.join(os.path.dirname(__file__), '..', 'database', 'amazon_movies.db')
+    print(f"Database path: {db_path}")
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 

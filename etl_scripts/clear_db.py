@@ -20,6 +20,8 @@ def clear_db(db_path: Path | None = None) -> None:
 	if db_path is None:
 		db_path = project_root / "database" / "amazon_movies.db"
 
+	print(f"Database path: {db_path}")
+
 	if not db_path.exists():
 		raise FileNotFoundError(f"Database not found at {db_path}")
 

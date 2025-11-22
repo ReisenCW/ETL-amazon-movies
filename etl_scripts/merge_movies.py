@@ -20,6 +20,7 @@ def preprocess_title(title):
 def merge_movies():
     logging.info("Starting merge_movies")
     db_path = os.path.join(os.path.dirname(__file__), '..', 'database', 'amazon_movies.db')
+    print(f"Database path: {db_path}")
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
