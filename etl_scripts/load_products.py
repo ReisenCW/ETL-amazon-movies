@@ -2,8 +2,10 @@ import sqlite3
 import os
 from bs4 import BeautifulSoup
 from datetime import datetime
+import logging
 
 def load_products_to_db():
+    logging.info("Starting load_products_to_db")
     # 连接数据库
     script_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.abspath(os.path.join(script_dir, '..'))
@@ -29,7 +31,12 @@ def load_products_to_db():
 
     # 解析HTML文件
     html_dir = os.path.join(project_root, 'data', 'crawled_html')
-    for filename in os.listdir(html_dir):
+    try:
+        filenames = os.listdir(html_dir)
+    except FileNotFoundError:
+        logging.warning(f"Directory {html_dir} not found. Skipping load_products_to_db.")
+        return
+    for filename in filenames:
         if filename.endswith('.html'):
             product_id = filename[:-5]  # 去掉.html
             html_path_abs = os.path.join(html_dir, filename)
@@ -108,4 +115,4 @@ def load_products_to_db():
 
     conn.commit()
     conn.close()
-    print("Products loaded successfully")
+    logging.info("Finished load_products_to_db")
