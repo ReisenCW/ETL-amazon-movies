@@ -4,6 +4,7 @@ from datetime import datetime
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
+import logging
 
 # 停用词列表
 STOP_WORDS = set(['a', 'an', 'the', 'at', 'in', 'on', 'of', 'for', 'to', 'with', 'by', 'and', 'or', 'but', 'as', 'is', 'it', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must', 'can', 'shall', 'this', 'that', 'these', 'those', 'i', 'you', 'he', 'she', 'we', 'they', 'me', 'him', 'her', 'us', 'them'])
@@ -17,7 +18,9 @@ def preprocess_title(title):
     return ' '.join(filtered)
 
 def merge_movies():
+    logging.info("Starting merge_movies")
     db_path = os.path.join(os.path.dirname(__file__), '..', 'database', 'amazon_movies.db')
+    print(f"Database path: {db_path}")
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
@@ -113,7 +116,7 @@ def merge_movies():
 
     conn.commit()
     conn.close()
-    print("Movies merged successfully using embeddings")
+    logging.info("Finished merge_movies")
 
 if __name__ == "__main__":
     film1 = "The Great Adventure"

@@ -4,6 +4,7 @@ from datetime import datetime
 
 def fill_missing_dates():
     db_path = os.path.join(os.path.dirname(__file__), '..', 'database', 'amazon_movies.db')
+    print(f"Database path: {db_path}")
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 

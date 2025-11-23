@@ -65,6 +65,7 @@ def find_similar_names(names, threshold=80):
 
 def normalize_names():
     db_path = os.path.join(os.path.dirname(__file__), '..', 'database', 'amazon_movies.db')
+    print(f"Database path: {db_path}")
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 

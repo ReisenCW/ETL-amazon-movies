@@ -2,10 +2,13 @@ import sqlite3
 import os
 from datetime import datetime
 from bs4 import BeautifulSoup
+import logging
 
 def load_reviews_to_db():
+    logging.info("Starting load_reviews_to_db")
     # 连接数据库
     db_path = os.path.join(os.path.dirname(__file__), '..', 'database', 'amazon_movies.db')
+    print(f"Database path: {db_path}")
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
@@ -28,7 +31,12 @@ def load_reviews_to_db():
 
     # 解析HTML文件中的reviews
     html_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'crawled_html')
-    for filename in os.listdir(html_dir):
+    try:
+        filenames = os.listdir(html_dir)
+    except FileNotFoundError:
+        logging.warning(f"Directory {html_dir} not found. Skipping load_reviews_to_db.")
+        return
+    for filename in filenames:
         if filename.endswith('.html'):
             product_id = filename[:-5]  # 去掉.html
             html_path = os.path.join(html_dir, filename)
@@ -99,4 +107,4 @@ def load_reviews_to_db():
 
     conn.commit()
     conn.close()
-    print("Reviews loaded successfully from HTML")
+    logging.info("Finished load_reviews_to_db")
