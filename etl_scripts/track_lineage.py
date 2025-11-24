@@ -39,6 +39,7 @@ def track_lineage():
     cursor.execute('''
         SELECT movie_id FROM final_movies
         WHERE release_date NOT IN (SELECT release_date FROM raw_products WHERE product_id = final_movies.core_product_id)
+        AND release_date NOT LIKE '%douban%'
     ''')
     for (movie_id,) in cursor.fetchall():
         cursor.execute('''

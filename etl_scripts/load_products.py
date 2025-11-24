@@ -102,7 +102,7 @@ def load_products_to_db():
                         actors = value_text
 
             # 版本（如DVD/蓝光）
-            version_spans = soup.select('#tmmSwatches ul a span[aria-label]')
+            version_spans = soup.select('#tmmSwatches ul a[a-button-text] span[aria-label]')
             version = ','.join(span.get_text().strip() for span in version_spans if span.get_text().strip())
 
             source_url = f'https://www.amazon.com/dp/{product_id}'

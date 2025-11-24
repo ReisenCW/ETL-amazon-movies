@@ -31,7 +31,24 @@
 # 项目介绍
 项目分为几个模块：scrapy爬虫模块，airflow的调度模块
 
-## scrapy爬虫模块
+## 环境需求
+- Ubuntu 20.04
+- Python 3.12
+- Scrapy 2.11.1
+- Apache Airflow 2.10.0
+- 其他Python依赖请参考`requirements.txt`文件
+
+```shell
+# Ubuntu环境下安装Python环境
+# 创建并激活虚拟环境
+python -m venv venv
+source venv/bin/activate
+
+# 安装依赖
+pip install -r requirements.txt
+```
+
+## scrapy爬虫模块 - 负责Extract
 ### 使用流程
 - 获取网页
 ```shell
@@ -46,7 +63,7 @@ cd amazon_movie_crawler
 scrapy crawl amazon_movies
 ```
 
-## airflow调度模块
+## airflow调度模块 - 负责Transform 和 Load
 ### 使用流程
 - 验证环境：若正确显示版本, 说明已成功安装airflow
 ```shell
@@ -93,10 +110,22 @@ airflow scheduler -D
 ### 运行
 
 - 从DAG列表中选择`etl_amazon_movies`，并运行
-![alt text](image-1.png)
+![alt text](md_img/image-1.png)
 
 - DAG调度图
-![alt text](image-3.png)
+![alt text](md_img/image-3.png)
 
 - 可以查看每个任务的具体执行情况
-![alt text](image-2.png)
+![alt text](md_img/image-2.png)
+
+- 若不想使用airflow, 也可以直接运行`etl_amazon_movies.py`脚本来执行ETL任务
+```shell
+python etl_amazon_movies.py
+```
+
+### 爬取的数据
+- 爬取的HTML页面保存在`data/crawled_html`目录下
+- ETL处理后的数据保存在`database/amazon_movies.db`目录下
+
+![alt text](md_img/image.png)
+
