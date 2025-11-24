@@ -20,7 +20,6 @@ from etl_scripts.load_products import load_products_to_db
 from etl_scripts.merge_movies import merge_movies
 from etl_scripts.normalize_names import normalize_names
 from etl_scripts.fill_missing_dates import fill_missing_dates
-from etl_scripts.enrich_from_douban import enrich_from_douban
 from etl_scripts.track_lineage import track_lineage
 
 default_args = {
@@ -84,14 +83,8 @@ fill_missing_dates_task = PythonOperator(
     dag=dag,
 )
 
-# 任务6: 从豆瓣丰富数据
-enrich_from_douban_task = PythonOperator(
-    task_id='enrich_from_douban',
-    python_callable=enrich_from_douban,
-    dag=dag,
-)
 
-# 任务7: 跟踪血缘
+# 任务6: 跟踪血缘
 track_lineage_task = PythonOperator(
     task_id='track_lineage',
     python_callable=track_lineage,
@@ -106,5 +99,3 @@ load_reviews_task >> merge_movies_task
 load_products_task >> merge_movies_task
 merge_movies_task >> normalize_names_task
 normalize_names_task >> fill_missing_dates_task
-fill_missing_dates_task >> enrich_from_douban_task
-enrich_from_douban_task >> track_lineage_task

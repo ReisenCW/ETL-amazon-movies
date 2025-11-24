@@ -15,7 +15,6 @@ from etl_scripts.load_products import load_products_to_db
 from etl_scripts.merge_movies import merge_movies
 from etl_scripts.normalize_names import normalize_names
 from etl_scripts.fill_missing_dates import fill_missing_dates
-from etl_scripts.enrich_from_douban import enrich_from_douban
 from etl_scripts.track_lineage import track_lineage
 
 def main():
@@ -26,7 +25,6 @@ def main():
     is_merge_movies = True
     is_normalize_names = True
     is_fill_missing_dates = True
-    is_enrich_from_douban = True
     is_track_lineage = True
 
     try:
@@ -54,12 +52,8 @@ def main():
             print("5. 填充缺失日期...")
             fill_missing_dates()
 
-        if is_enrich_from_douban:
-            print("6. 从豆瓣丰富数据...")
-            enrich_from_douban()
-
         if is_track_lineage:
-            print("7. 跟踪数据血缘...")
+            print("6. 跟踪数据血缘...")
             track_lineage()
 
         print("ETL流程完成！")
